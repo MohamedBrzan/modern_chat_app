@@ -1,6 +1,6 @@
-import avatarImg1 from '/images/user1.jpg';
-import avatarImg2 from '/images/user2.jpg';
-import avatarImg3 from '/images/user3.jpg';
+import avatarImg1 from '/images/male.jpg';
+import avatarImg2 from '/images/female.jpg';
+import avatarImg3 from '/images/male.jpg';
 
 export type UserType = {
   name: string;

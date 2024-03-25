@@ -15,8 +15,11 @@ export default function OffCanvas() {
     <section className='sm:hidden'>
       <Sheet key={'left'}>
         <SheetTrigger asChild>
-          <Button className='inline w-fit bg-transparent' variant='outline'>
-            <Menu />
+          <Button
+            className='inline w-fit bg-transparent border-none outline-none hover:my-2'
+            variant='outline'
+          >
+            <Menu className='text-purple-700' />
           </Button>
         </SheetTrigger>
         <SheetContent side={'left'}>

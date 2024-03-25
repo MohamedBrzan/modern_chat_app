@@ -1,8 +1,11 @@
-import { Router } from 'express';
-import { Register } from '../controllers/User';
+import { NextFunction, Request, Response, Router } from 'express';
+import User from '../models/User';
 
 const _ = Router();
 
-_.post('/', Register);
+_.get('/users', async (req: Request, res: Response, next: NextFunction) => {
+  const users = await User.find();
+  res.status(200).json(users);
+});
 
 export default _;

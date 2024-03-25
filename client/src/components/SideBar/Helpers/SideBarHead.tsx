@@ -1,27 +1,29 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import avatarImg from '/images/user3.jpg';
+import maleImg from '/images/male.jpg';
+import femaleImg from '/images/female.jpg';
 import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
 
 export default function SideBarHead() {
-  const user = {
-    name: 'ali mohamed',
-    email: 'mohamed@gmail.com',
-    avatar: 'https://github.com/shadcn.png',
-  };
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+
   return (
     <>
-      {' '}
       <article className='flex flex-row flex-1 gap-2 items-center my-2'>
         <Avatar>
-          <AvatarImage src={avatarImg} alt={user.name} />
-          <AvatarFallback>{user.name.slice(0, 3).toUpperCase()}</AvatarFallback>
+          <AvatarImage
+            src={user.gender === 'male' ? maleImg : femaleImg}
+            alt={user?.username}
+          />
+          <AvatarFallback>
+            {user?.username.slice(0, 3).toUpperCase()}
+          </AvatarFallback>
         </Avatar>
         <div className='user_info'>
           <div className='capitalize text-ellipsis'>
-            <strong>{user.name}</strong>
+            <strong>{user?.username}</strong>
           </div>
-          <p className='text-muted-foreground'>{user.email}</p>
+          <p className='text-muted-foreground'>{user?.email}</p>
         </div>
       </article>
       <Separator />

@@ -9,9 +9,9 @@ export interface Message {
 
 const MessageSchema = new Schema<Message>(
   {
-    sender: { type: Types.ObjectId, ref: 'User' },
-    receiver: { type: Types.ObjectId, ref: 'User' },
-    message: { type: String },
+    sender: { type: Types.ObjectId, ref: 'User', required: true },
+    receiver: { type: Types.ObjectId, ref: 'User', required: true },
+    message: { type: String, required: true },
   },
   { timestamps: true }
 );
