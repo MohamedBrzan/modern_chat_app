@@ -7,7 +7,7 @@ import { useContext } from 'react';
 import { UserContext } from '@/context/UserAuthContext';
 
 export default function SideBarHead() {
-  const user = useContext(UserContext);
+  const { user } = useContext(UserContext);
 
   return (
     <>

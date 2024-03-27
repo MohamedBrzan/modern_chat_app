@@ -1,11 +1,10 @@
-import express, { response } from 'express';
+import express from 'express';
 import { createServer } from 'node:http';
 import DB from './db/DB';
 import { Server } from 'socket.io';
 import { v4 } from 'uuid';
-import UserModel from './models/User';
-import Message from './models/Message';
 import UserRoute from './routes/User';
+import MessageRoute from './routes/Message';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
@@ -53,7 +52,7 @@ io.on('connection', async (socket) => {
 });
 
 app.use('/', UserRoute);
-// app.use('/message', Message);
+app.use('/message', MessageRoute);
 
 app.use(ErrorMessage);
 

@@ -43,7 +43,7 @@ export default function Register() {
         required_error: 'Password is required',
         invalid_type_error: 'Password must be a string',
       })
-      .min(8, { message: 'your password must be at least 8 characters' }),
+      .min(4, { message: 'your password must be at least 4 characters' }),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
