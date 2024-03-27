@@ -6,15 +6,18 @@ import './globals.css';
 import SocketIoContext from './context/SocketIoContext.tsx';
 import { Provider } from 'react-redux';
 import { store } from './store/store.ts';
+import UserAuthContext from './context/UserAuthContext.tsx';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <SocketIoContext>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </SocketIoContext>
-    </Provider>
-  </React.StrictMode>
+  <Provider store={store}>
+    <UserAuthContext>
+      <React.StrictMode>
+        <SocketIoContext>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </SocketIoContext>
+      </React.StrictMode>
+    </UserAuthContext>
+  </Provider>
 );

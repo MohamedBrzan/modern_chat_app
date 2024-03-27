@@ -12,15 +12,19 @@ import { Input } from '@/components/ui/input';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useContext, useEffect } from 'react';
-import { SocketContext } from '@/context/SocketIoContext';
+// import { useContext, useEffect } from 'react';
+// import { SocketContext } from '@/context/SocketIoContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
+import { ThunkDispatch } from '@reduxjs/toolkit';
+import { useDispatch } from 'react-redux';
+import { registerUser } from '@/store/AsyncThunkApis/RegisterAsyncThunk';
 
 export default function Register() {
-  const socket = useContext(SocketContext);
+  const dispatch = useDispatch<ThunkDispatch<unknown, unknown, never>>();
   const navigate = useNavigate();
+  // const socket = useContext(SocketContext);
   const formSchema = z.object({
     username: z
       .string({
@@ -52,19 +56,21 @@ export default function Register() {
   });
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
-    socket.emit('register', { ...values });
+    // socket.emit('register', { ...values });
+    dispatch(registerUser(values));
+    navigate('/');
   };
 
-  useEffect(() => {
-    socket.on('user', ({ username, email, gender, _id }) => {
-      localStorage.setItem(
-        'user',
-        JSON.stringify({ username, email, gender, _id })
-      );
-      location.reload();
-      navigate('/');
-    });
-  }, [navigate, socket]);
+  // useEffect(() => {
+  //   socket.on('user', ({ username, email, gender, _id }) => {
+  //     localStorage.setItem(
+  //       'user',
+  //       JSON.stringify({ username, email, gender, _id })
+  //     );
+  //     location.reload();
+  //     navigate('/');
+  //   });
+  // }, [navigate, socket]);
 
   return (
     <section className='xs:w-full sm:w-1/2 mx-5 md:m-auto md:w-1/2 xl:w-1/4 bg-slate-200 p-5 translate-y-1/4 rounded-lg shadow-lg'>

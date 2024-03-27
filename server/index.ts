@@ -1,5 +1,4 @@
-import express from 'express';
-import dotenv from 'dotenv';
+import express, { response } from 'express';
 import { createServer } from 'node:http';
 import DB from './db/DB';
 import { Server } from 'socket.io';
@@ -8,67 +7,58 @@ import UserModel from './models/User';
 import Message from './models/Message';
 import UserRoute from './routes/User';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import dotenv from 'dotenv';
+import session from 'express-session';
+import ErrorMessage from './middleware/ErrorMessage';
 
-//For env File
 dotenv.config();
 
 DB();
 
 const app = express();
 const server = createServer(app);
-export const io = new Server(server, {
+
+app.use(cookieParser());
+app.use(express.json());
+
+const io = new Server(server, {
   cors: {
     origin: true,
     methods: ['GET', 'POST'],
   },
 });
-app.use(express.json());
 app.use(
   cors({
     origin: true,
     credentials: true,
   })
 );
-const port = process.env.PORT || 8000;
+
+//* Setup the session middleware
+app.use(
+  session({
+    name: process.env.SESSION_NAME,
+    secret: process.env.SESSION_SECRET!,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { maxAge: parseInt(process.env.EXPIRES!), secure: true },
+  })
+);
+const port = parseInt(process.env.PORT!) || 8000;
 const userId = v4();
 
 io.on('connection', async (socket) => {
   console.log(`user ${userId} connected`);
-  socket.emit('session', {
-    userId,
-  });
-
-  socket.on('register', async ({ username, email, password }) => {
-    let user = await UserModel.findOne({ email });
-    if (user) throw new Error(`this email ${email} is already registered`);
-
-    user = await UserModel.create({
-      username,
-      email,
-      password,
-    });
-
-    socket.emit('user', user);
-  });
-
-  socket.on('sign_in', async ({ email, password }) => {
-    let user = await UserModel.findOne({ email });
-    if (!user) throw new Error(`this email ${email} not exists`);
-
-    if (user.password !== password) throw new Error('wrong password');
-
-    socket.emit('received_sign_in', user);
-  });
-
-  socket.on('send_message', async ({ sender, receiver, message }) => {
-    const msg = await Message.create({ sender, receiver, message });
-    socket.emit('received_message', msg);
-  });
 });
 
 app.use('/', UserRoute);
 // app.use('/message', Message);
 
+app.use(ErrorMessage);
+
 server.listen(port, () => {
   console.log(`Server is Fire at http://localhost:${port}`);
 });
+
+export { app, io };

@@ -1,10 +1,14 @@
 import OffCanvas from '@/components/OffCanvas/OffCanvas';
 import { buttonVariants } from '@/components/ui/button';
+import { logoutUser } from '@/store/AsyncThunkApis/LogoutAsyncThunk';
+import { ThunkDispatch } from '@reduxjs/toolkit';
+import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 
 export default function Header() {
-  const user = JSON.parse(localStorage.getItem('user') || '');
+  const dispatch = useDispatch<ThunkDispatch<unknown, unknown, never>>();
   const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
   return (
     <div className='bg-blue-400 flex flex-row justify-between md:justify-end'>
       <OffCanvas />
@@ -13,8 +17,7 @@ export default function Header() {
           to='/sign-in'
           className={buttonVariants({ variant: 'link' })}
           onClick={() => {
-            localStorage.clear();
-            location.reload();
+            dispatch(logoutUser());
             navigate('/sign-in');
           }}
         >

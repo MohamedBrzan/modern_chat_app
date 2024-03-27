@@ -1,11 +1,13 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import maleImg from '/images/male.jpg';
 import femaleImg from '/images/female.jpg';
 import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
+import { useContext } from 'react';
+import { UserContext } from '@/context/UserAuthContext';
 
 export default function SideBarHead() {
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const user = useContext(UserContext);
 
   return (
     <>
@@ -15,9 +17,6 @@ export default function SideBarHead() {
             src={user.gender === 'male' ? maleImg : femaleImg}
             alt={user?.username}
           />
-          <AvatarFallback>
-            {user?.username.slice(0, 3).toUpperCase()}
-          </AvatarFallback>
         </Avatar>
         <div className='user_info'>
           <div className='capitalize text-ellipsis'>

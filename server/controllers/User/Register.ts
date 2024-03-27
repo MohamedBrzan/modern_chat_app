@@ -1,23 +1,15 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import User from '../../models/User';
-import { Server } from 'socket.io';
-import { DefaultEventsMap } from 'socket.io/dist/typed-events';
+import AsyncHandler from '../../middleware/AsyncHandler';
+import SendToken from '../../utils/SendToken';
+import { io } from '../..';
 
-export default async function Register(
-  io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
-) {
-  try {
-    console.log('heyy~~');
-    io?.on('connection', async (socket) => {
-      socket.on('register', async ({ username, email, password }) => {
-        socket.emit('received_registration', { username, email, password });
-        let user = await User.find({ email });
-        if (user) throw new Error(`user ${email} is already registered`);
-        await User.create({ username, email, password });
-        socket.emit('user', { username, email, password });
-      });
-    });
-  } catch (err) {
-    throw new Error(`${err}`);
-  }
-}
+export default AsyncHandler(async (req: Request, res: Response) => {
+  const { username, email, password } = req.body;
+  const findUser = await User.findOne({ email });
+  if (findUser) throw new Error(`user ${email} is already registered`);
+  const user = await User.create({ username, email, password });
+
+  io.emit('user', user);
+  SendToken(res, user);
+});

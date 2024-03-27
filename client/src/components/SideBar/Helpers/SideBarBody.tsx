@@ -8,12 +8,10 @@ import femaleImg from '/images/female.jpg';
 
 export const Users = () => {
   const { data } = useGetUsersQuery('');
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
-  const users = data?.filter((person) => person['_id']! !== user['_id']!);
 
   return (
     <section className='relative h-full'>
-      {users?.map(({ _id, username, gender }, i) => (
+      {data?.map(({ _id, username, gender }, i) => (
         <Link to={`/${_id}`} key={i}>
           <article className='group flex flex-col items-start'>
             <div className='user_info w-full text-base mb-1 cursor-pointer group-hover:bg-slate-200 p-2 flex flex-row gap-3 rounded-sm'>

@@ -1,11 +1,16 @@
-import { NextFunction, Request, Response, Router } from 'express';
-import User from '../models/User';
+import { Router } from 'express';
+import isAuthorized from '../middleware/isAuthorized';
+import Register from '../controllers/User/Register';
+import Login from '../controllers/User/Login';
+import Users from '../controllers/User/Users';
+import Logout from '../controllers/User/Logout';
 
 const _ = Router();
 
-_.get('/users', async (req: Request, res: Response, next: NextFunction) => {
-  const users = await User.find();
-  res.status(200).json(users);
-});
+_.post('/register', Register);
+_.post('/login', Login);
+_.post('/logout', Logout);
+
+_.get('/users', isAuthorized, Users);
 
 export default _;

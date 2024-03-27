@@ -12,13 +12,17 @@ import { Input } from '@/components/ui/input';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useContext, useEffect } from 'react';
-import { SocketContext } from '@/context/SocketIoContext';
+// import { useContext, useEffect } from 'react';
+// import { SocketContext } from '@/context/SocketIoContext';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { ThunkDispatch } from '@reduxjs/toolkit';
+import { loginUser } from '@/store/AsyncThunkApis/LoginAsyncThunk';
 
 export default function SignIn() {
-  const socket = useContext(SocketContext);
+  const dispatch = useDispatch<ThunkDispatch<unknown, unknown, never>>();
   const navigate = useNavigate();
+  // const socket = useContext(SocketContext);
   const formSchema = z.object({
     email: z
       .string({
@@ -31,7 +35,7 @@ export default function SignIn() {
         required_error: 'Password is required',
         invalid_type_error: 'Password must be a string',
       })
-      .min(8, { message: 'your password must be at least 8 characters' }),
+      .min(4, { message: 'your password must be at least 4 characters' }),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -42,20 +46,22 @@ export default function SignIn() {
     },
   });
 
-  const handleSubmit = (values: z.infer<typeof formSchema>) => {
-    socket.emit('sign_in', values);
+  const handleSubmit = async (values: z.infer<typeof formSchema>) => {
+    dispatch(loginUser(values));
+    navigate('/');
   };
 
-  useEffect(() => {
-    socket.on('received_sign_in', ({ username, email, gender, _id }) => {
-      localStorage.setItem(
-        'user',
-        JSON.stringify({ username, email, gender, _id })
-      );
-      location.reload();
-      navigate('/');
-    });
-  }, [navigate, socket]);
+  // useEffect(() => {
+  //   socket.on('user', ({ username, email, gender, _id }) => {
+  //     console.log('first');
+  //     localStorage.setItem(
+  //       'user',
+  //       JSON.stringify({ username, email, gender, _id })
+  //     );
+  //     location.reload();
+  //     navigate('/');
+  //   });
+  // }, [navigate, socket]);
 
   return (
     <section className='xs:w-full md:w-1/2 xl:w-1/4 mx-5 md:m-auto bg-slate-200 p-5 translate-y-1/4 rounded-lg shadow-lg'>
