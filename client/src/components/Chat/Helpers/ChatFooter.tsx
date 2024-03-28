@@ -24,6 +24,7 @@ export default function ChatFooter({
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const target = e.target as HTMLTextAreaElement;
     setMessage(target.value);
+    
   };
 
   return (
