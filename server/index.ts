@@ -48,6 +48,16 @@ io.on('connection', async (socket) => {
   if (userId != 'undefined') userSocketMap.set(userId, socket.id);
   console.log(userSocketMap);
 
+  socket.on('keydown', (data) => {
+    const receiverSocketId = getReceiverSocketId(data.receiverId);
+    socket.to(receiverSocketId).emit('keydown', data.username);
+  });
+
+  socket.on('keyup', (data) => {
+    const senderSocketId = getReceiverSocketId(data.senderId);
+    socket.to(senderSocketId).emit('keyup');
+  });
+
   // io.emit() is used to send events to all the connected clients
   io.emit('getOnlineUsers', Object.keys(userSocketMap));
 

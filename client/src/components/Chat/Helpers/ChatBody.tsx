@@ -1,5 +1,5 @@
 import { useChatSocketCtx } from '@/context/SocketIoContext';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
 import State from '@/store/StateType';
@@ -19,15 +19,26 @@ export default function ChatBody({
 
   const { socket } = useChatSocketCtx();
 
+  const activityRef = useRef<HTMLElement>(null);
+
   useEffect(() => {
     const chatBody = chatBodyRef.current!;
-    setTimeout(() => chatBody.scrollIntoView({ behavior: 'smooth' }), 100);
+    setTimeout(() => chatBody.scrollIntoView({ behavior: 'smooth' }), 100000);
     socket.on('new message', (data) => {
-      console.log('new message event is => ', data);
       setMessage([...messages, { ...data }]);
-
       chatBody.scrollTop = chatBody.scrollHeight;
     });
+    const activity = activityRef.current!;
+    socket.on('keydown', (username: string) => {
+      activity.textContent = `${username} is typing...`;
+
+      chatBody.scrollTop = chatBody.scrollHeight + activity.scrollHeight;
+    });
+
+    socket.on('keyup', () => {
+      activity.textContent = '';
+    });
+
     chatBody.scrollTop = chatBody.scrollHeight;
   }, [socket, messages, setMessage, chatBodyRef]);
 
@@ -37,7 +48,10 @@ export default function ChatBody({
         <div className='message_container' key={i}>
           {sender === user['_id'].toString() ? (
             <section className='mb-5 p-2'>
-              <div className='text-right ml-auto p-1 rounded-xl bg-slate-100 w-fit max-w-md'>
+              <div
+                className='text-right ml-auto p-1 rounded-xl bg-slate-100 w-fit max-w-96'
+                style={{ wordWrap: 'break-word' }}
+              >
                 <span>
                   <small>{message}</small>
                 </span>
@@ -48,7 +62,10 @@ export default function ChatBody({
             </section>
           ) : (
             <section className='mb-5 p-2'>
-              <div className='text-left mr-auto p-1 rounded-xl bg-blue-400 w-fit max-w-md'>
+              <div
+                className='text-left mr-auto p-1 rounded-xl bg-blue-400 w-fit max-w-96'
+                style={{ wordWrap: 'break-word' }}
+              >
                 <span>
                   <small>{message}</small>
                 </span>
@@ -60,6 +77,9 @@ export default function ChatBody({
           )}
         </div>
       ))}
+      <p className='activity p-2 text-sm'>
+        <em ref={activityRef}></em>
+      </p>
     </section>
   );
 }
