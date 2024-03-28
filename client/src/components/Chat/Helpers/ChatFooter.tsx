@@ -1,5 +1,5 @@
 import { Textarea } from '@/components/ui/textarea';
-import { SocketContext } from '@/context/SocketIoContext';
+import { useChatSocketCtx } from '@/context/SocketIoContext';
 import { UserContext } from '@/context/UserAuthContext';
 import { useSendMessageMutation } from '@/store/api/Message';
 import { Send } from 'lucide-react';
@@ -12,7 +12,7 @@ export default function ChatFooter({
   chatBodyRef: React.RefObject<HTMLDivElement>;
 }) {
   const [message, setMessage] = useState<string>('');
-  const socket = useContext(SocketContext);
+  const { socket } = useChatSocketCtx();
   const user = useContext(UserContext);
   const { id } = useParams();
   const [sendMessage] = useSendMessageMutation();
@@ -20,7 +20,7 @@ export default function ChatFooter({
   const handleSubmit = async () => {
     await sendMessage({ receiverId: id ? id : '', message }).then(() => {
       socket.emit('send_message', {
-        sender: user['_id'],
+        sender: user && user['_id'],
         receiver: id,
         message,
       });

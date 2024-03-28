@@ -5,11 +5,21 @@ import APIS_ROOT from '@/constants/APIS_ROOT';
 
 export const registerUser = createAsyncThunk(
   'user/register',
-  async (user: { username: string; email: string; password: string }) => {
+  async ({
+    username,
+    email,
+    password,
+    gender,
+  }: {
+    username: string;
+    email: string;
+    password: string;
+    gender: string;
+  }) => {
     const { data } = await axios({
       url: `${APIS_ROOT}/register`,
       method: 'POST',
-      data: { ...user },
+      data: { username, email, password, gender },
       withCredentials: true,
     });
     return data;

@@ -1,13 +1,10 @@
-import { useGetUsersQuery } from '@/store/api/User';
+import State, { User } from '@/store/StateType';
 import { ReactNode, createContext } from 'react';
+import { useSelector } from 'react-redux';
 
-const user = JSON.parse(localStorage.getItem('user') || '{}');
-export const UserContext = createContext(user);
+export const UserContext = createContext({} as User);
 export default function UserAuthContext({ children }: { children: ReactNode }) {
-  const { data: users } = useGetUsersQuery('');
-  return (
-    <UserContext.Provider value={{ user, users }}>
-      {children}
-    </UserContext.Provider>
-  );
+  const { user } = useSelector((state: State) => state.Auth);
+
+  return <UserContext.Provider value={user}>{children}</UserContext.Provider>;
 }

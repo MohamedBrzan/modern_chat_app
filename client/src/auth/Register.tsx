@@ -12,19 +12,15 @@ import { Input } from '@/components/ui/input';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-// import { useContext, useEffect } from 'react';
-// import { SocketContext } from '@/context/SocketIoContext';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Label } from '@/components/ui/label';
 import { ThunkDispatch } from '@reduxjs/toolkit';
 import { useDispatch } from 'react-redux';
 import { registerUser } from '@/store/AsyncThunkApis/RegisterAsyncThunk';
 
 export default function Register() {
   const dispatch = useDispatch<ThunkDispatch<unknown, unknown, never>>();
-  const navigate = useNavigate();
-  // const socket = useContext(SocketContext);
+
   const formSchema = z.object({
     username: z
       .string({
@@ -44,6 +40,7 @@ export default function Register() {
         invalid_type_error: 'Password must be a string',
       })
       .min(4, { message: 'your password must be at least 4 characters' }),
+    gender: z.enum(['male', 'female']),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -52,13 +49,13 @@ export default function Register() {
       username: '',
       email: '',
       password: '',
+      gender: 'male' || 'female',
     },
   });
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
     // socket.emit('register', { ...values });
     dispatch(registerUser(values));
-    navigate('/');
   };
 
   // useEffect(() => {
@@ -132,17 +129,36 @@ export default function Register() {
             )}
           />
 
-          <RadioGroup defaultValue='male' required>
-            <FormLabel className='mb-5'> Gender</FormLabel>
-            <div className='flex items-center space-x-2'>
-              <RadioGroupItem value='male' id='r1' />
-              <Label htmlFor='r1'>Male</Label>
-            </div>
-            <div className='flex items-center space-x-2'>
-              <RadioGroupItem value='female' id='r2' />
-              <Label htmlFor='r2'>Female</Label>
-            </div>
-          </RadioGroup>
+          <FormField
+            control={form.control}
+            name='gender'
+            render={({ field }) => (
+              <FormItem className='space-y-3'>
+                <FormLabel>Gender</FormLabel>
+                <FormControl>
+                  <RadioGroup
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    className='flex flex-col space-y-1'
+                  >
+                    <FormItem className='flex items-center space-x-3 space-y-0'>
+                      <FormControl>
+                        <RadioGroupItem value='male' />
+                      </FormControl>
+                      <FormLabel className='font-normal'>male</FormLabel>
+                    </FormItem>
+                    <FormItem className='flex items-center space-x-3 space-y-0'>
+                      <FormControl>
+                        <RadioGroupItem value='female' />
+                      </FormControl>
+                      <FormLabel className='font-normal'>Female</FormLabel>
+                    </FormItem>
+                  </RadioGroup>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <Button type='submit'>Submit</Button>
         </form>
       </Form>

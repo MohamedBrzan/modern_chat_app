@@ -45,10 +45,28 @@ app.use(
   })
 );
 const port = parseInt(process.env.PORT!) || 8000;
-const userId = v4();
+
+export const getReceiverSocketId = (receiverId: string) => {
+  return userSocketMap[receiverId];
+};
+
+const userSocketMap = {};
 
 io.on('connection', async (socket) => {
-  console.log(`user ${userId} connected`);
+  console.log('a user connected', socket.id);
+
+  const userId = socket.handshake.query.userId;
+  if (userId != 'undefined') userSocketMap['userId'] = socket.id;
+
+  // io.emit() is used to send events to all the connected clients
+  io.emit('getOnlineUsers', Object.keys(userSocketMap));
+
+  // socket.on() is used to listen to the events. can be used both on client and server side
+  socket.on('disconnect', () => {
+    console.log('user disconnected', socket.id);
+    delete userSocketMap['userId'];
+    io.emit('getOnlineUsers', Object.keys(userSocketMap));
+  });
 });
 
 app.use('/', UserRoute);

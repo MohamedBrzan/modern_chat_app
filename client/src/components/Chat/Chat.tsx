@@ -5,6 +5,7 @@ import ChatHead from './Helpers/ChatHead';
 import { useGetUsersQuery } from '@/store/api/User';
 import { useEffect, useRef, useState } from 'react';
 import { useGetMessagesQuery } from '@/store/api/Message';
+import Message from '@/interfaces/Message';
 
 export default function Chat() {
   const { id } = useParams();
@@ -13,29 +14,33 @@ export default function Chat() {
   const { data } = useGetUsersQuery('');
   const selectedUser = data?.find((person) => person['_id'] === id);
 
-  const { isLoading, isSuccess, data: msgs } = useGetMessagesQuery(id || '');
+  const {
+    isLoading,
+    isSuccess,
+    data: msgs,
+    refetch,
+  } = useGetMessagesQuery(id ? id : '');
 
-  const [messages, setMessages] = useState<
-    | {
-        receiver: string;
-        sender: string;
-        message: string;
-        isDeleted: boolean;
-        isEdited: boolean;
-      }[]
-    | []
-  >([]);
+  const [messages, setMessages] = useState<Message[] | []>([]);
 
   useEffect(() => {
     if (isSuccess && !isLoading) {
       setMessages(msgs);
     }
-  }, [isLoading, isSuccess, msgs]);
+    setTimeout(
+      () => chatBodyRef?.current?.scrollIntoView({ behavior: 'smooth' }),
+      200
+    );
+  }, [isLoading, isSuccess, msgs, id, refetch]);
 
   return (
     <article className='w-full md:w-3/4 flex-1 h-screen bg-slate-200 flex flex-col'>
       {selectedUser && <ChatHead user={selectedUser} />}
-      <ChatBody messages={messages} setMessage={setMessages} chatBodyRef={chatBodyRef} />
+      <ChatBody
+        messages={messages}
+        setMessage={setMessages}
+        chatBodyRef={chatBodyRef}
+      />
       <ChatFooter chatBodyRef={chatBodyRef} />
     </article>
   );

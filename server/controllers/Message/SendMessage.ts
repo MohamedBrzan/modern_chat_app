@@ -4,7 +4,7 @@ import Message from '../../models/Message';
 import User from '../../models/User';
 import ErrorHandler from '../../middleware/ErrorHandler';
 import AsyncHandler from '../../middleware/AsyncHandler';
-import { io } from '../..';
+import { getReceiverSocketId, io } from '../..';
 
 export default AsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -40,14 +40,14 @@ export default AsyncHandler(
       sender.chats.push(chat);
       receiver.chats.push(chat);
     }
-    await Promise.all([
-      await sender.save(),
-      await receiver.save(),
-      await chat.save(),
-    ]);
+    await Promise.all([sender.save(), receiver.save(), chat.save()]);
 
-    io.emit('received_message', msg);
-    io.to(receiverId).emit('received_message', msg);
+    // SOCKET IO FUNCTIONALITY WILL GO HERE
+    const receiverSocketId = getReceiverSocketId(receiverId);
+    if (receiverSocketId) {
+      // io.to(<socket_id>).emit() used to send events to specific client
+      io.to(receiverSocketId).emit('new_message', msg);
+    }
 
     return res.status(201).json(msg);
   }

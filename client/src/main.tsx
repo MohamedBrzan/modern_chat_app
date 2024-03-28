@@ -3,20 +3,23 @@ import ReactDOM from 'react-dom/client';
 import App from './App.tsx';
 import { BrowserRouter } from 'react-router-dom';
 import './globals.css';
-import SocketIoContext from './context/SocketIoContext.tsx';
+// import SocketIoContext from './context/SocketIoContext.tsx';
 import { Provider } from 'react-redux';
 import { store } from './store/store.ts';
 import UserAuthContext from './context/UserAuthContext.tsx';
+import ChatSocketCtxProvider from './context/SocketIoContext.tsx';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <Provider store={store}>
     <UserAuthContext>
       <React.StrictMode>
-        <SocketIoContext>
+        {/* <SocketIoContext> */}
+        <ChatSocketCtxProvider>
           <BrowserRouter>
             <App />
           </BrowserRouter>
-        </SocketIoContext>
+        </ChatSocketCtxProvider>
+        {/* </SocketIoContext> */}
       </React.StrictMode>
     </UserAuthContext>
   </Provider>

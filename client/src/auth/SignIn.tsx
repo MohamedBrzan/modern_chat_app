@@ -14,14 +14,14 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 // import { useContext, useEffect } from 'react';
 // import { SocketContext } from '@/context/SocketIoContext';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { ThunkDispatch } from '@reduxjs/toolkit';
 import { loginUser } from '@/store/AsyncThunkApis/LoginAsyncThunk';
 
 export default function SignIn() {
   const dispatch = useDispatch<ThunkDispatch<unknown, unknown, never>>();
-  const navigate = useNavigate();
+
   // const socket = useContext(SocketContext);
   const formSchema = z.object({
     email: z
@@ -48,7 +48,6 @@ export default function SignIn() {
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
     dispatch(loginUser(values));
-    navigate('/');
   };
 
   // useEffect(() => {

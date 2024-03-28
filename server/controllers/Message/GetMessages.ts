@@ -18,6 +18,6 @@ export default AsyncHandler(
       participants: { $all: [req['user']._id, receiverId] },
     }).populate('messages');
 
-    return res.status(201).json(chat.messages);
+    return res.status(201).json(chat?.messages);
   }
 );

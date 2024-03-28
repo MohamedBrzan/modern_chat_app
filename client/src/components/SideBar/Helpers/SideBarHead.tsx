@@ -3,18 +3,17 @@ import maleImg from '/images/male.jpg';
 import femaleImg from '/images/female.jpg';
 import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
-import { useContext } from 'react';
-import { UserContext } from '@/context/UserAuthContext';
+import { useSelector } from 'react-redux';
 
 export default function SideBarHead() {
-  const { user } = useContext(UserContext);
+  const { user } = useSelector((state) => state?.Auth);
 
   return (
     <>
       <article className='flex flex-row flex-1 gap-2 items-center my-2'>
         <Avatar>
           <AvatarImage
-            src={user.gender === 'male' ? maleImg : femaleImg}
+            src={user?.gender === 'male' ? maleImg : femaleImg}
             alt={user?.username}
           />
         </Avatar>
