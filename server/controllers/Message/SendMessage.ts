@@ -44,9 +44,11 @@ export default AsyncHandler(
 
     // SOCKET IO FUNCTIONALITY WILL GO HERE
     const receiverSocketId = getReceiverSocketId(receiverId);
+    const senderSocketId = getReceiverSocketId(senderId.toString());
+    console.log(senderSocketId);
     if (receiverSocketId) {
       // io.to(<socket_id>).emit() used to send events to specific client
-      io.to(receiverSocketId).emit('new_message', msg);
+      io.to(receiverSocketId).to(senderSocketId).emit('new message', msg);
     }
 
     return res.status(201).json(msg);

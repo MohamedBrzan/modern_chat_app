@@ -1,7 +1,9 @@
 // import { ReactNode, createContext } from 'react';
 // import { io } from 'socket.io-client';
 
+import State from '@/store/StateType';
 import { ReactNode, createContext, useContext, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import io, { Socket } from 'socket.io-client';
 
 // const socket = io('http://localhost:4000', {
@@ -39,7 +41,15 @@ export const ChatSocketCtx = createContext<ChatSocketCtxState>(
 export const useChatSocketCtx = () => useContext(ChatSocketCtx);
 
 const ChatSocketCtxProvider = (props: { children?: ReactNode }) => {
-  const socketRef = useRef(io({ autoConnect: false }));
+  const { user } = useSelector((state: State) => state.Auth);
+
+  const socketRef = useRef(
+    io('http://localhost:4000', {
+      query: {
+        userId: user?._id,
+      },
+    })
+  );
 
   return (
     <ChatSocketCtx.Provider value={{ socket: socketRef.current }}>

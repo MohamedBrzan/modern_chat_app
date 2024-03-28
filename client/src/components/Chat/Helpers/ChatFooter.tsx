@@ -1,9 +1,7 @@
 import { Textarea } from '@/components/ui/textarea';
-import { useChatSocketCtx } from '@/context/SocketIoContext';
-import { UserContext } from '@/context/UserAuthContext';
 import { useSendMessageMutation } from '@/store/api/Message';
 import { Send } from 'lucide-react';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 export default function ChatFooter({
@@ -12,19 +10,11 @@ export default function ChatFooter({
   chatBodyRef: React.RefObject<HTMLDivElement>;
 }) {
   const [message, setMessage] = useState<string>('');
-  const { socket } = useChatSocketCtx();
-  const user = useContext(UserContext);
   const { id } = useParams();
   const [sendMessage] = useSendMessageMutation();
 
   const handleSubmit = async () => {
-    await sendMessage({ receiverId: id ? id : '', message }).then(() => {
-      socket.emit('send_message', {
-        sender: user && user['_id'],
-        receiver: id,
-        message,
-      });
-    });
+    await sendMessage({ receiverId: id ? id : '', message });
     setMessage('');
     const chatBody = chatBodyRef.current!;
     chatBody.scrollIntoView({ behavior: 'smooth' });

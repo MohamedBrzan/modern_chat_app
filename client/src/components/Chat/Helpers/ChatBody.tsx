@@ -22,8 +22,8 @@ export default function ChatBody({
   useEffect(() => {
     const chatBody = chatBodyRef.current!;
     setTimeout(() => chatBody.scrollIntoView({ behavior: 'smooth' }), 100);
-    socket.on('new_message', (data) => {
-      console.log(data);
+    socket.on('new message', (data) => {
+      console.log('new message event is => ', data);
       setMessage([...messages, { ...data }]);
 
       const chatBody = chatBodyRef.current!;
